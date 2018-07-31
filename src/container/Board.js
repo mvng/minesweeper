@@ -9,14 +9,20 @@ class Board extends Component {
         let { mines, size } = this.props;
         let board = _.range(size).map(() => {
             return _.range(size).map(() => {
-                //TODO: Randomize Bombs - (Math.random() >= .5)
-                if (mines > bombs && Math.random() >= .9) {
-                    bombs++;
-                    return '*';
-                }
                 return 0;
             })
         });
+
+        //Lay Bombs Randomly by RNG
+        for (let b = 0; bombs < mines; b ++) {
+            let x = Math.floor((Math.random() * Date.now() * size)) % size;
+            let y = Math.floor((Math.random() * Date.now() * size)) % size;
+            if(board[x][y] !== '*') {
+                //Slot does not have a bomb
+                board[x][y] = '*';
+                bombs++;
+            }
+        }
         let mask = _.range(size).map(() => {
             return _.range(size).map(() => {
                 return '-';
@@ -31,14 +37,12 @@ class Board extends Component {
                 }
             }
         }
-
         function incriment(row, col) {
             function checkCoordinates(x, y) {
 
                 if (x < 0 || y < 0 || x >= size || y >= size) {
                     return false;
                 }
-
                 if (board[x][y] === '*') {
                     return false
                 }
@@ -60,46 +64,37 @@ class Board extends Component {
     }
 
     openTile(x,y) {
+        const { size } = this.props;
+        const _this = this;
 
-        let board = this.state.board;
-        let mask = this.state.mask;
-        let size = this.props.size;
-        let _this = this;
-        let foundNumber = false;
+        let { board, mask } = this.state;
+        mask[x][y] = board[x][y];
 
         if(board[x][y] === '*') {
             alert('Game Over');
         } else {
-            mask[x][y] = board[x][y];
             if(mask[x][y] === 0) {
-
                 function checkZero(x,y) {
-                    
                     if ( x < 0 || y < 0 || x >= size || y >= size) {
                         return false;
                     }
-
-                    if (!foundNumber && mask[x][y] === '-' && board[x][y] !== '*') {
+                    if (mask[x][y] === '-' && board[x][y] !== '*') {
                         mask[x][y] = board[x][y];
                         if(board[x][y] !== 0) {
-                            foundNumber = true;
                             return;
                         }
                         _this.openTile(x, y);
-
                     }  
                     return;        
                  }
-                //Check adjacent
-                checkZero(x + -1, y + 0);
-                checkZero(x + 0, y + -1);
-                checkZero(x + 0, y + 1);
-                checkZero(x + 1, y + 0);
-
+                for (let gridX = -1; gridX < 2; gridX++) {
+                    for (let gridY = -1; gridY < 2; gridY++) {
+                        checkZero(x + gridX, y + gridY);
+                    }
+                }
             }
         }
-
-            this.setState({mask: mask});
+        this.setState({mask: mask});
     }
     render() {
 
