@@ -24,7 +24,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Board size={10} mines={10} tile={{}}/>
+        <Board size={15} mines={100} />
         <Status time={this.state.time}/>
       </div>
     );

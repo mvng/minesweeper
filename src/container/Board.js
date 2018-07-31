@@ -15,8 +15,8 @@ class Board extends Component {
 
         //Lay Bombs Randomly by RNG
         for (let b = 0; bombs < mines; b ++) {
-            let x = Math.floor((Math.random() * Date.now() * size)) % size;
-            let y = Math.floor((Math.random() * Date.now() * size)) % size;
+            let x = Math.floor((Math.random() * size)) % size;
+            let y = Math.floor((Math.random() * size)) % size;
             if(board[x][y] !== '*') {
                 //Slot does not have a bomb
                 board[x][y] = '*';
@@ -99,7 +99,7 @@ class Board extends Component {
     render() {
 
         return (
-            <div>{this.state.mask.map((x, row) => {
+            <div id="board">{this.state.mask.map((x, row) => {
                 let boardRow = x.map((status, col) => {
                     return <Tile key={col} openTile={() => { this.openTile(row,col)} } display={status} bomb={status} />;
                 })
